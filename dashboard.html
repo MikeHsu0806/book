@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>個人閱讀紀錄與推薦系統</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script>
+      function handleLogout() {
+        window.location.href = "login.html";
+      }
+    </script>
+    <style>
+      body, html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      body {
+        background-color: #f4f4f9;
+        font-family: 'Arial', sans-serif;
+      }
+
+      .navbar {
+        background-color: #e3f2fd !important; /* Change to light blue */
+        padding: 1rem;
+      }
+
+      .navbar-brand {
+        color: #0d47a1 !important; /* Darker blue text for contrast */
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+
+      .nav-link {
+        color: #1565c0 !important; /* Adjust link color for visibility */
+      }
+
+      .nav-link:hover {
+        color: #0d47a1 !important; /* Darker hover color */
+      }
+
+      .btn-outline-danger {
+        color: #000000; /* Change text color to black */
+        border-color: #e74c3c;
+      }
+
+      .btn-outline-danger:hover {
+        background-color: #e74c3c;
+        color: #ffffff;
+      }
+
+      .container {
+        max-width: 1200px;
+      }
+
+      .card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .card-header {
+        font-size: 1.25rem;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+
+      .progress-bar {
+        background-color: #27ae60;
+      }
+
+      .list-group-item {
+        font-size: 0.95rem;
+        border: none;
+        padding: 0.75rem 1rem;
+      }
+
+      .list-group-item:nth-child(odd) {
+        background-color: #f9f9f9;
+      }
+
+      .btn {
+        font-size: 0.95rem;
+        border-radius: 5px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      footer {
+        background-color: #2c3e50;
+        color: #ecf0f1;
+        padding: 1rem 0;
+        text-align: center;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+      }
+
+      footer p {
+        margin: 0;
+        font-size: 0.9rem;
+      }
+
+      section {
+        display: none;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+      }
+      section.active {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      #welcome {
+        background-image: none; /* Remove background image */
+        background-color: #f4f4f9; /* Restore original background color */
+        color: black; /* Restore original text color */
+        padding: 2rem; /* Restore padding */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Restore box shadow */
+        min-height: auto; /* Remove full height */
+        opacity: 1; /* Remove transparency */
+        display: block; /* Restore block display */
+        flex-direction: initial; /* Remove flex properties */
+        justify-content: initial; /* Remove flex properties */
+        align-items: initial; /* Remove flex properties */
+        text-align: left; /* Restore text alignment */
+        width: auto; /* Remove full width */
+      }
+
+      #welcome h1 {
+        font-size: 3rem; /* Adjust font size for large screens */
+      }
+
+      #welcome p {
+        font-size: 1.5rem; /* Adjust font size for readability */
+      }
+
+      @media (max-width: 768px) {
+        #welcome h1 {
+          font-size: 2rem; /* Adjust font size for smaller screens */
+        }
+
+        #welcome p {
+          font-size: 1rem; /* Adjust font size for smaller screens */
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm mb-4">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">閱讀紀錄系統</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#welcome">首頁</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#add-record">新增紀錄</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#recommendations">推薦書籍</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#goals">閱讀目標</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#stats">統計圖表</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#categories">分類瀏覽</a>
+              </li>
+            </ul>
+            <button class="btn btn-outline-danger" onclick="handleLogout()">登出</button>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container my-5">
+      <section id="welcome" class="text-center mb-4 active">
+        <h1 class="text-primary">歡迎使用個人閱讀紀錄與推薦系統</h1>
+        <p class="text-muted">管理你的閱讀紀錄，探索更多書籍</p>
+      </section>
+
+      <section id="actions" class="row active">
+        <!-- Removed the Quick Actions section as requested -->
+      </section>
+
+      <section id="add-record" class="mb-4">
+        <div class="card">
+          <div class="card-header bg-info text-white">新增閱讀紀錄</div>
+          <div class="card-body">
+            <form id="add-record-form">
+              <div class="mb-3">
+                <label for="book-title" class="form-label">書名</label>
+                <input type="text" class="form-control" id="book-title" placeholder="輸入書名" required>
+              </div>
+              <div class="mb-3">
+                <label for="book-author" class="form-label">作者</label>
+                <input type="text" class="form-control" id="book-author" placeholder="輸入作者" required>
+              </div>
+              <div class="mb-3">
+                <label for="reading-status" class="form-label">閱讀狀態</label>
+                <select class="form-select" id="reading-status" required>
+                  <option value="想讀">想讀</option>
+                  <option value="閱讀中">閱讀中</option>
+                  <option value="已讀完">已讀完</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary">新增紀錄</button>
+            </form>
+            <div id="record-list" class="mt-4">
+              <h5>新增的紀錄：</h5>
+              <ul class="list-group" id="record-list-items"></ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="recommendations" class="mb-4">
+        <div class="card">
+          <div class="card-header bg-warning text-dark">推薦書籍</div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">書名 1</h5>
+                    <p class="card-text">作者：作者 1</p>
+                    <p class="card-text">簡介：這是一本很棒的書。</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">書名 2</h5>
+                    <p class="card-text">作者：作者 2</p>
+                    <p class="card-text">簡介：這是另一本很棒的書。</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">書名 3</h5>
+                    <p class="card-text">作者：作者 3</p>
+                    <p class="card-text">簡介：這是第三本很棒的書。</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="goals" class="mb-4">
+        <div class="card">
+          <div class="card-header bg-success text-white">閱讀目標</div>
+          <div class="card-body">
+            <p>年度目標：50 本書</p>
+            <p>已完成：20 本書</p>
+            <div class="progress">
+              <div class="progress-bar" role="progressbar" style="width: 40%;" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">40%</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="stats" class="mb-4">
+        <div class="card">
+          <div class="card-header bg-primary text-white">閱讀統計圖表</div>
+          <div class="card-body">
+            <p>這裡可以嵌入圖表，例如月度閱讀量。</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="quick-search" class="mb-4">
+        <div class="card">
+          <div class="card-header bg-secondary text-white">快速搜索</div>
+          <div class="card-body">
+            <input type="text" class="form-control" placeholder="輸入書名或作者進行搜索">
+          </div>
+        </div>
+      </section>
+
+      <section id="recent-reads" class="mb-4">
+        <div class="card">
+          <div class="card-header bg-dark text-white">最近閱讀紀錄</div>
+          <div class="card-body">
+            <ul class="list-group">
+              <li class="list-group-item">書名：書名 A - 作者：作者 A</li>
+              <li class="list-group-item">書名：書名 B - 作者：作者 B</li>
+              <li class="list-group-item">書名：書名 C - 作者：作者 C</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="popular-books" class="mb-4">
+        <div class="card">
+          <div class="card-header bg-danger text-white">熱門書籍排行榜</div>
+          <div class="card-body">
+            <ol>
+              <li>書名 X - 作者 X</li>
+              <li>書名 Y - 作者 Y</li>
+              <li>書名 Z - 作者 Z</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section id="categories" class="mb-4">
+        <div class="card">
+          <div class="card-header bg-secondary text-white">書籍分類瀏覽</div>
+          <div class="card-body">
+            <div class="d-grid gap-2">
+              <button class="btn btn-outline-primary">文學</button>
+              <button class="btn btn-outline-secondary">科學</button>
+              <button class="btn btn-outline-success">歷史</button>
+              <button class="btn btn-outline-danger">藝術</button>
+              <button class="btn btn-outline-warning">哲學</button> <!-- Added new category -->
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 個人閱讀紀錄與推薦系統</p>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const navLinks = document.querySelectorAll(".nav-link");
+        const sections = document.querySelectorAll("main section");
+
+        navLinks.forEach(link => {
+          link.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            // Remove active class from all sections
+            sections.forEach(section => section.classList.remove("active"));
+
+            // Add active class to the target section
+            const targetId = this.getAttribute("href").substring(1);
+            const targetSection = document.getElementById(targetId);
+            if (targetSection) {
+              targetSection.classList.add("active");
+            }
+          });
+        });
+
+        // Set the first section as active by default
+        if (sections.length > 0) {
+          sections[0].classList.add("active");
+        }
+      });
+
+      document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('add-record-form');
+        const recordList = document.getElementById('record-list-items');
+
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+
+          // 獲取表單數據
+          const title = document.getElementById('book-title').value;
+          const author = document.getElementById('book-author').value;
+          const status = document.getElementById('reading-status').value;
+
+          // 新增到列表
+          const listItem = document.createElement('li');
+          listItem.className = 'list-group-item';
+          listItem.textContent = `書名：${title}，作者：${author}，狀態：${status}`;
+          recordList.appendChild(listItem);
+
+          // 清空表單
+          form.reset();
+        });
+      });
+    </script>
+  </body>
+</html>
